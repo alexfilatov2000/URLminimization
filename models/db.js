@@ -3,6 +3,7 @@ const { Pool } = require('pg');
 const pool = new Pool({
     user: 'alex__filatov',
     host: 'localhost',
+//     use env to get settings
     database: 'url'
 });
 
