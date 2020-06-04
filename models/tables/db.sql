@@ -1,4 +1,5 @@
 CREATE OR REPLACE PROCEDURE transfer()
+-- is it used? Why you need transfer procedure?
 AS $$
 BEGIN
     create table if not exists users
@@ -7,6 +8,7 @@ BEGIN
 		constraint users_pk
 			primary key,
 	email varchar(255) not null,
+-- 	wrong size, mail not limites to 255
 	password varchar(255) not null
 );
 
@@ -17,10 +19,16 @@ create table if not exists redirection
 		constraint redirection_pk
 			primary key,
 	country_code varchar(255),
+-- 	wrong size, code isn't so long
 	device_type varchar(255),
+-- 	the same in all fileds
 	redirection_type varchar(255),
 	long_url varchar(255),
 	short_url varchar(255)
+-- 	date\time filed missing
+-- 	no origin ip filed
+-- 	no useragent field
+-- 	no link to urlschema
 );
 
 
