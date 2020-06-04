@@ -30,6 +30,7 @@ export const registerPost = async(ctx) => {
 
 export const loginPost = async(ctx) => {
     //Check if tables exists
+//     this is db init, it shouldnt be done on each user login
     await client.query("do $$\n" +
         "begin\n" +
         "\tcall transfer();\n" +
@@ -109,12 +110,14 @@ export const receiveNewPassword = async(ctx) => {
     if (error) return ctx.body = {error : error.message};
 
     let user = await client.query("SELECT * FROM users WHERE id = $1", [_id]);
+//     use limit 1 where you need only 1 record
     if (!user.rows[0]) ctx.throw(500);
 
     const payload = jwt.decode(token, process.env.RESET_TOKEN_SECRET);
     if (payload._id === user.rows[0].id) {
         const hash = await argon2.hash(password);
         await client.query("UPDATE users SET password = $1 WHERE id = $2", [hash, _id]);
+//         check doc, its possible sql injection I can use % and * in email
         ctx.body = {_id, token, error: 'Your password has been saved', submitted: true};
     } else {
         ctx.throw(400, "Something wrong")
