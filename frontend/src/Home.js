@@ -16,10 +16,16 @@ class Home extends Component {
 
 
     async handleClick(){
+        let tokenData = JSON.parse(sessionStorage.tokenData)
+        let decode = parseJwt(tokenData.accessToken);
+
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ OriginalName: document.getElementById('basic-url').value })
+            body: JSON.stringify({
+                OriginalName: document.getElementById('basic-url').value,
+                Email: decode.email
+            })
         };
         const response = await fetch(`${URL}/api/url/shorten`, requestOptions);
         const data = await response.json();
@@ -54,6 +60,13 @@ class Home extends Component {
     }
 }
 
+const parseJwt = (token) => {
+    try {
+        return JSON.parse(atob(token.split('.')[1]));
+    } catch (e) {
+        return null;
+    }
+};
 
 export default Home;
 

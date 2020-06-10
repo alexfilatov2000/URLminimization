@@ -1,6 +1,11 @@
-import {main, createShortLink, redirectByCode} from '../controllers/urlController';
 import Router from 'koa-router';
-import {auth} from '../verifyToken';
+import {
+    main,
+    createShortLink,
+    redirectByCode,
+} from '../controllers/urlController';
+import { auth } from '../verifyToken';
+
 const router = new Router();
 
 router

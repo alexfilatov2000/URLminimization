@@ -11,8 +11,9 @@ class TopLinks extends Component {
         }
     }
 
-     componentDidMount() {
+     async componentDidMount() {
         this.fetchWithAuth();
+
     }
 
     async refreshToken(url, requestOptions){

@@ -23,7 +23,7 @@ Building a custom URL shortening service like bitly.com using Koa and PostgreSQL
 - ### Back end
 
   - [Koa](https://koajs.com/)- Nodejs framwork for building the REST Apis
-  - [Koa-static](https://koajs.com/)- for static files
+  - [Koa-router](https://www.npmjs.com/package/koa-router)- for routing
   - [Nodemailer](https://nodemailer.com/about/)- for mail
   - [Koa-bodyparser](https://koajs.com/)- for post routes
   - [Dotenv](https://github.com/motdotla/dotenv#readme)- for private data
