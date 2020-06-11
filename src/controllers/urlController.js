@@ -19,16 +19,16 @@ export const main = async (ctx) => {
 };
 
 export const createShortLink = async (ctx) => {
-    //console.log(ctx.request.body)
-    const email = ctx.request.body.Email
+    const email = ctx.request.body.Email;
     const longUrl = ctx.request.body.OriginalName;
+    const type = ctx.request.body.Type;
     const urlCode = shortid.generate();
 
     if (validUrl.isUri(longUrl)) {
         try {
             await client.query(
-                'INSERT INTO urlshema (longurl, urlcode, email) VALUES ($1, $2, $3)',
-                [longUrl, urlCode, email],
+                'INSERT INTO urlshema (longurl, urlcode, email, type) VALUES ($1, $2, $3, $4)',
+                [longUrl, urlCode, email, type],
             );
             return (ctx.body = { urlCode });
         } catch (err) {
@@ -41,10 +41,10 @@ export const createShortLink = async (ctx) => {
 export const redirectByCode = async (ctx) => {
 
     const ua = parser(ctx.get('user-agent'));
-    // let geo = geoip.lookup(ctx.get('x-forwarded-for') || ctx.request.connection.remoteAddress);
+    let geo = geoip.lookup(ctx.get('x-forwarded-for') || ctx.request.connection.remoteAddress);
 
-    const ip = await publicIp.v4();
-    const geo = geoip.lookup(ip);
+    // const ip = await publicIp.v4();
+    // const geo = geoip.lookup(ip);
 
     const urlCode = ctx.params.code;
     const url = await client.query(
@@ -57,7 +57,7 @@ export const redirectByCode = async (ctx) => {
             `INSERT INTO redirection (country_code, device_type, redirection_type,
              long_url, short_url, ip_address, user_agent, email)
             VALUES($1, $2, $3, $4, $5, $6, $7, $8)`,
-            [geo.country, ua.os.name, 301, url.rows[0].longurl, urlCode, ip, ua, url.rows[0].email],
+            [geo.country, ua.os.name, url.rows[0].type, url.rows[0].longurl, urlCode, ip, ua, url.rows[0].email],
         );
 
         return ctx.redirect(url.rows[0].longurl);
