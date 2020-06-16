@@ -8,14 +8,24 @@ import client from '../../models/db';
 export const main = async (ctx) => {
     const email = ctx.request.user.email;
     // Get unique elements from db
-    const newLoc = await client.query(`SELECT country_code, device_type, redirection_type, long_url, short_url, count(*)
+    const newLoc = await client.query(`SELECT redirection_type, long_url, short_url, count(*)
         FROM redirection
         WHERE email = $1
-        GROUP BY country_code, device_type, redirection_type, long_url, short_url`,
+        GROUP BY long_url, short_url, redirection_type
+        order by count desc limit 5`,
         [email],
         );
 
     ctx.body = { links: newLoc.rows, user: email};
+};
+
+export const allLinks = async (ctx) => {
+    const shortUrl = ctx.request.body.shortUrl;
+    const newLoc = await client.query(`SELECT * FROM redirection
+        WHERE short_url = $1`,
+        [shortUrl],
+    );
+    ctx.body = { allLinks: newLoc.rows};
 };
 
 export const createShortLink = async (ctx) => {
@@ -43,8 +53,8 @@ export const redirectByCode = async (ctx) => {
     const ua = parser(ctx.get('user-agent'));
     let geo = geoip.lookup(ctx.get('x-forwarded-for') || ctx.request.connection.remoteAddress);
 
-    // const ip = await publicIp.v4();
-    // const geo = geoip.lookup(ip);
+     // const ip = await publicIp.v4();
+     // const geo = geoip.lookup(ip);
 
     const urlCode = ctx.params.code;
     const url = await client.query(

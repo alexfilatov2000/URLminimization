@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {ListGroup} from "react-bootstrap";
+import {Button, ListGroup} from "react-bootstrap";
 import {URL} from "./config";
 
 class TopLinks extends Component {
@@ -7,12 +7,34 @@ class TopLinks extends Component {
         super(props);
         this.state = {
             links: [],
-            user: ''
+            allLinks: [],
+            user: '',
+            page: false
         }
+        this.handleClick = this.handleClick.bind(this);
     }
 
      async componentDidMount() {
         this.fetchWithAuth();
+
+    }
+
+     async handleClick(link){
+         const requestOptions = {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({
+                 shortUrl: link.short_url,
+             })
+         };
+         const response = await fetch(`${URL}/api/allLinks`, requestOptions);
+         const data = await response.json();
+         console.log(data);
+         // this.setState({ urlCode: data.urlCode });
+         this.setState({
+             page: true,
+             allLinks: data.allLinks
+         });
 
     }
 
@@ -65,7 +87,20 @@ class TopLinks extends Component {
 
     render() {
         const baseUrl = `${URL}/`;
-        return (
+        return this.state.page ? (
+            <div>
+                <ListGroup>
+                    {this.state.allLinks.map(link =>
+                        <ListGroup.Item variant="Light" key={link.id}>
+                            <a href={baseUrl+link.short_url}>
+                                {baseUrl+link.short_url}
+                            </a>
+                            {', Country: '+link.country_code} {', Device: '+link.device_type}  {', ip: '+link.ip_address} {', longUrl: '+link.long_url} {', user-agent: '+link.user_agent}
+                        </ListGroup.Item>
+                    )}
+                </ListGroup>
+            </div>
+        ) : (
             <div>
                 <ListGroup>
                     {this.state.links.map(link =>
@@ -73,7 +108,10 @@ class TopLinks extends Component {
                             <a href={baseUrl+link.short_url}>
                                 {baseUrl+link.short_url}
                             </a>
-                            {', Country: '+link.country_code} {', Device: '+link.device_type} {', cnt: '+link.count} {', longUrl: '+link.long_url}
+                            {', cnt: '+link.count} {', Redirect: '+link.redirection_type} {', longUrl: '+link.long_url}
+                            <Button variant="primary" type="button" className="pull-right" onClick={() => this.handleClick(link)} >
+                                check
+                            </Button>
                         </ListGroup.Item>
                     )}
                 </ListGroup>
