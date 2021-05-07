@@ -39,7 +39,7 @@
     "query-string": "^6.12.1",
     "request-promise": "^4.2.5",
     "shortid": "^2.2.15",
-    "ua-parser-js": "^0.7.21",
+    "ua-parser-js": "^0.7.24",
     "valid-url": "^1.0.9"
   },
   "devDependencies": {
